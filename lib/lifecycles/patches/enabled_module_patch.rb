@@ -8,13 +8,15 @@ module Lifecycles
           end
   
           def enable_lifecycles
-            if self.name == 'lifecycles'
-              puts 'plugin enabled'
+            if self.name != 'lifecycles'
+              return
             end
+
+            Lifecycles::Services::SyncService.new(self.project).call
           end
       end
     end
 end
   
-  EnabledModule.include Lifecycles::Patches::EnabledModulePatch
+EnabledModule.include Lifecycles::Patches::EnabledModulePatch
   
