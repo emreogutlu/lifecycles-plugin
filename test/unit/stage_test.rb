@@ -1,6 +1,6 @@
 require_relative '../test_helper'
 
-class LifecycleTest < ActiveSupport::TestCase
+class StageTest < ActiveSupport::TestCase
 
   # Replace this with your real tests.
   def test_truth
