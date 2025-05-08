@@ -1,4 +1,8 @@
 class Stage < ActiveRecord::Base
+    belongs_to :issue
+    belongs_to :category, class_name: 'IssueCategory', foreign_key: 'category_id'
+    belongs_to :status, class_name: 'IssueStatus', foreign_key: 'status_id'
+    belongs_to :user
 
     def self.start_new_lifecycle(issue)
       create(

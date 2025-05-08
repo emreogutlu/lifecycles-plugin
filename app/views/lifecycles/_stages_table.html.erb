@@ -1,0 +1,38 @@
+<table class="lifecycles-table">
+  <thead>
+    <tr>
+      <th class="sortable">
+        <%= link_to '#', params.permit(:project_id, :category_id, :user_id).merge(sort: 'issue_id', direction: toggle_direction('issue_id')) %>
+      </th>
+      <th>Issue</th>
+      <th>Category</th>
+      <th>Status</th>
+      <th>User</th>
+      <th class="sortable">
+        <%= link_to 'Time spent (hours)', params.permit(:project_id, :category_id, :user_id).merge(sort: 'time_spent', direction: toggle_direction('time_spent')) %>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @stages.each_with_index do |stage, index| %>
+      <tr>
+        <td><%= stage.issue_id %></td>
+        <td><%= stage.issue&.subject || '---' %></td>
+        <td><%= stage.category&.name || '---' %></td>
+        <td><%= stage.status&.name || '---' %></td>
+        <td><%= stage.user&.name || '---' %></td>
+        <td><%= @stage_spent_times[index] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+  <tfoot>
+    <tr>
+      <td class="total-label">Total:</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="total-value"><%= @total_time_spent %></td>
+    </tr>
+  </tfoot>
+</table>

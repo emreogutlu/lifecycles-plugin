@@ -7,7 +7,7 @@ Redmine::Plugin.register :lifecycles do
   author_url 'https://github.com/emreogutlu'
 
   project_module :lifecycles do
-    permission :view_lifecycles, lifecycles: :index
+    permission :lifecycles, { lifecycles: [:index] }, public: true
   end
   menu :project_menu, :lifecycles, { controller: 'lifecycles', action: 'index' }, caption: 'Lifecycles', after: :activity, param: :project_id
 

@@ -1,0 +1,21 @@
+<%= form_with url: lifecycles_path, method: :get, skip_enforcing_utf8: true, html: { class: "lifecycles-filter-form" } do %>
+  <%= hidden_field_tag :project_id, @project.id %>
+
+  <div class="lifecycles-filter">
+    <label for="category_id">Filter by <b>Category:</b></label>
+    <%= select_tag :category_id, 
+      options_for_select([['---', '']] + @issue_categories.map { |category| [category.name, category.id] }, params[:category_id]),
+      id: "category_id", 
+      class: "lifecycles-filter-dropdown",
+      onchange: 'this.form.submit();' %>
+  </div>
+  
+  <div class="lifecycles-filter">
+    <label for="category_id">Filter by <b>User:</b></label>
+    <%= select_tag :user_id, 
+      options_for_select([['---', '']] + @users.map { |user| [user.name, user.id] }, params[:user_id]),
+      id: "user_id", 
+      class: "lifecycles-filter-dropdown", 
+      onchange: 'this.form.submit();' %>
+  </div>
+<% end %>

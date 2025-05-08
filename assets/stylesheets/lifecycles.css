@@ -1,0 +1,55 @@
+.lifecycles-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  text-align: center;
+}
+ 
+.lifecycles-table th, .lifecycles-table td {
+ padding: 8px;
+ border-top: 1px solid #ddd;
+ border-bottom: 1px solid #ddd;
+ text-align: center;
+ vertical-align: middle;
+}
+ 
+.lifecycles-table thead th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+}
+ 
+.lifecycles-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.lifecycles-table .sortable {
+  color: #3366cc;
+}
+
+.lifecycles-table tfoot td {
+  font-weight: bold;
+  padding: 8px;
+  color: #fff;
+  background-color: #000;
+}
+ 
+.lifecycles-filter {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+  
+.lifecycles-filter label {
+  font-size: 14px;
+  margin-right: 10px;
+}
+  
+.lifecycles-filter-dropdown {
+  font-size: 14px;
+  width: 140px;
+  height: 28px;
+}
+  
+.lifecycles-filter-form {
+  display: inline;
+} 
+ 
