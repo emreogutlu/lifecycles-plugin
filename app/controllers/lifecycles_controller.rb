@@ -34,10 +34,18 @@ class LifecyclesController < ApplicationController
     }.compact_blank
     
     @stages = Stage
-      .includes(:issue, :category, :status, :user)
-      .joins(:issue)
+      .joins(:issue, :status, :user)
+      .left_joins(:category)
       .where(issues: { project_id: @project.id })
       .where(filters)
+      .select(
+        'stages.*',
+        'issues.subject AS issue_subject',
+        'issue_statuses.name AS status_name',
+        'issue_categories.name AS category_name',
+        'users.firstname AS user_firstname',
+        'users.lastname AS user_lastname'
+      )
   end
 
   def apply_sorting
