@@ -51,5 +51,20 @@
   
 .lifecycles-filter-form {
   display: inline;
-} 
- 
+}
+
+.chart-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin-bottom: 40px;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.chart-item {
+  flex: 1 1;
+  min-width: 250px;
+  max-width: 100%;
+  box-sizing: border-box;
+}

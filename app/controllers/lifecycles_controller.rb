@@ -32,21 +32,31 @@ class LifecyclesController < ApplicationController
       user_id: params[:user_id],
       category_id: params[:category_id]
     }.compact_blank
-    
-    @stages = Stage
+  
+    base_scope = Stage
       .joins(:issue, :status, :user)
       .left_joins(:category)
       .where(issues: { project_id: @project.id })
       .where(filters)
-      .select(
-        'stages.*',
-        'issues.subject AS issue_subject',
-        'issue_statuses.name AS status_name',
-        'issue_categories.name AS category_name',
-        'users.firstname AS user_firstname',
-        'users.lastname AS user_lastname'
-      )
-  end
+  
+    @stages = base_scope.select(
+      'stages.*',
+      'issues.subject AS issue_subject',
+      'issue_statuses.name AS status_name',
+      'issue_categories.name AS category_name',
+      'users.firstname AS user_firstname',
+      'users.lastname AS user_lastname'
+    )
+  
+    @stages_by_user = base_scope
+      .group("users.firstname", "users.lastname")
+      .count
+      .transform_keys { |k| "#{k[0]} #{k[1]}" }
+  
+    @stages_by_category = base_scope
+      .group("issue_categories.name")
+      .count
+  end  
 
   def apply_sorting
     sort = params[:sort]

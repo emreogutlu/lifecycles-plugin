@@ -21,7 +21,7 @@
         <td><%= stage.category_name || '---' %></td>
         <td><%= stage.status_name || '---' %></td>
         <td><%= "#{stage.user_firstname} #{stage.user_lastname}".presence || '---' %></td>
-        <td><%= @stage_spent_times[index] %></td>
+        <td><%= "#{@stage_spent_times[index]}#{" (active)" if stage.end.nil?}" %></td>
       </tr>
     <% end %>
   </tbody>

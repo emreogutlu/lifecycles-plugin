@@ -11,4 +11,10 @@ Redmine::Plugin.register :lifecycles do
   end
   menu :project_menu, :lifecycles, { controller: 'lifecycles', action: 'index' }, caption: 'Lifecycles', after: :activity, param: :project_id
 
+  begin
+    require 'chartkick'
+  rescue LoadError
+    Rails.logger.warn("chartkick is not installed. Please add it to your Gemfile.")
+  end
+  
 end

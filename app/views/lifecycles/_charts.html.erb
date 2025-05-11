@@ -1,0 +1,13 @@
+<%= javascript_include_tag 'https://cdn.jsdelivr.net/npm/chart.js' %>
+<%= javascript_include_tag 'https://cdn.jsdelivr.net/npm/chartkick@5.0.1/dist/chartkick.min.js' %>
+
+<div class="chart-container">
+  <div class="chart-item">
+    <h3>Issues by User:</h3>
+    <%= pie_chart @stages_by_user %>
+  </div>
+  <div class="chart-item">
+    <h3>Issues by Category:</h3>
+    <%= pie_chart @stages_by_category %>
+  </div>
+</div>
