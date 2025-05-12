@@ -17,11 +17,11 @@
     <% @stages.each_with_index do |stage, index| %>
       <tr>
         <td><%= stage.issue_id %></td>
-        <td><%= stage.issue_subject || '---' %></td>
+        <td><%= issue_link_or_placeholder(stage.issue_id, stage.issue_subject) %></td>
         <td><%= stage.category_name || '---' %></td>
         <td><%= stage.status_name || '---' %></td>
         <td><%= "#{stage.user_firstname} #{stage.user_lastname}".presence || '---' %></td>
-        <td><%= "#{@stage_spent_times[index]}#{" (active)" if stage.end.nil?}" %></td>
+        <td><%= "#{stage.calculated_time_spent}#{" (active)" if stage.end.nil?}" %></td>
       </tr>
     <% end %>
   </tbody>

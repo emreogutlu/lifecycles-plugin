@@ -1,0 +1,7 @@
+<div class="popup-box">
+  <span class="popup-close">&times;</span>
+  <div class="popup-content">
+    <h3><%= @issue_subject || "Unknown Issue" %> by Status:</h3>
+    <%= bar_chart @issue_stages, id: "popup-chart", width: "800px", height: "500px" %>
+  </div>
+</div>
