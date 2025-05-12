@@ -15,14 +15,20 @@ class Stage < ActiveRecord::Base
     end
 
     def self.start_new_stage(journal_detail)
-      if journal_detail.prop_key != 'status_id' # the update is not about a status
+      prop_key = journal_detail.prop_key
+      if prop_key != 'category_id' && prop_key != 'status_id'
         return
       end
   
       journal = journal_detail.journal
       issue = journal.issue
       current_stage = where(issue_id: issue.id).where(end: nil).first
-      end_old_start_new_stage(issue, journal, journal_detail, current_stage)
+
+      if prop_key == 'category_id'
+        current_stage.update(category_id: journal_detail.value)
+      elsif prop_key == 'status_id'
+        end_old_start_new_stage(issue, journal, journal_detail, current_stage)
+      end
     end
   
     def self.end_old_start_new_stage(issue, journal, journal_detail, current_stage)

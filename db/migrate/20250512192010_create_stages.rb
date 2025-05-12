@@ -15,5 +15,7 @@ class CreateStages < ActiveRecord::Migration[6.1]
     add_index :stages, :user_id
     add_index :stages, :status_id
     add_index :stages, :category_id
+
+    add_foreign_key :stages, :issues, on_delete: :cascade
   end
 end

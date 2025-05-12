@@ -41,8 +41,8 @@ class LifecyclesController < ApplicationController
     }.compact_blank
   
     base_scope = Stage
-      .joins(:issue, :status, :user)
-      .left_joins(:category)
+      .joins(:issue, :status)
+      .left_joins(:user, :category)
       .where(issues: { project_id: @project.id })
       .where(filters)
 

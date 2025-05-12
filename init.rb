@@ -2,7 +2,7 @@ Redmine::Plugin.register :lifecycles do
   name 'Lifecycles plugin'
   author 'emre'
   description 'This is a plugin for Redmine'
-  version '0.0.1'
+  version '1.0.0'
   url 'https://github.com/emreogutlu/lifecycles-plugin'
   author_url 'https://github.com/emreogutlu'
 
