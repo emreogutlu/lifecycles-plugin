@@ -8,7 +8,10 @@ class LifecyclesController < ApplicationController
   end
 
   def popup
-    @issue_stages = @@static_stages
+    @project = Project.find(params[:project_id])
+    base_setup
+
+    @issue_stages = cached_stages
       .select { |stage| stage.issue_id == params[:issue_id].to_i }
       .group_by(&:status_name)
       .map { |status, stages| [status, stages.sum { |s| s.calculated_time_spent.to_f }] }
@@ -25,61 +28,47 @@ class LifecyclesController < ApplicationController
   end
 
   def load_filter_data
-    @users = User.where(id: Stage.joins(:issue)
-                                 .where(issues: { project_id: @project.id })
-                                 .select(:user_id).distinct)
-
-    @issue_categories = IssueCategory.where(id: Stage.joins(:issue)
-                                 .where(issues: { project_id: @project.id })
-                                 .select(:category_id).distinct)
+    filter_data = Lifecycles::Services::StageFilterService.new(@project)
+    @users = filter_data.users
+    @issue_categories = filter_data.issue_categories
   end
 
-  def filter_by
-    filters = {
+  def base_setup
+    @filters = {
       user_id: params[:user_id],
       category_id: params[:category_id]
     }.compact_blank
-  
-    base_scope = Stage
-      .joins(:issue, :status)
-      .left_joins(:user, :category)
-      .where(issues: { project_id: @project.id })
-      .where(filters)
+    @base_scope = Stage.filter_stages(@project.id, @filters)
+  end
 
-    now = Time.now
-
-    @stages = base_scope.select(
-      'stages.*',
-      'issues.subject AS issue_subject',
-      'issue_statuses.name AS status_name',
-      'issue_categories.name AS category_name',
-      'users.firstname AS user_firstname',
-      'users.lastname AS user_lastname',
-      "ROUND((
-        CASE 
-          WHEN stages.time_spent IS NOT NULL THEN stages.time_spent
-          ELSE TIMESTAMPDIFF(SECOND, stages.start, '#{now.to_s(:db)}')
-        END
-      ) / 3600.0, 2) AS calculated_time_spent"
-    )
-
-    @@static_stages = @stages
-      
-    @stages_by_user = base_scope
-      .group("users.firstname", "users.lastname")
-      .count
-      .transform_keys { |k| "#{k[0]} #{k[1]}" }
-  
-    @stages_by_category = base_scope
-      .group("issue_categories.name")
-      .count
+  def filter_by
+    base_setup
+    @stages = cached_stages
+    
+    grouped_counts = Stage.group_and_count_stages(@base_scope)
+    @stages_by_user = grouped_counts[:by_user]
+    @stages_by_category = grouped_counts[:by_category]
   end
 
   def apply_sorting
-    sort = params[:sort]
-    direction = params[:direction] == 'asc' ? 'asc' : 'desc'
-
-    @stages = @stages.order(time_spent: direction) if sort == 'time_spent'
-    @stages = @stages.order(issue_id: direction) unless sort == 'time_spent'
+    @stages = Stage.sort_stages(@stages, params[:sort], params[:direction])
   end
+
+  def cache_key
+    [
+      "stages_project_#{@project.id}",
+      "version_#{cache_version}",
+      "user_#{@filters[:user_id]}",
+      "category_#{@filters[:category_id]}",
+    ].compact.join("_")
+  end
+
+  def cache_version
+    Rails.cache.fetch("stages_version_#{@project.id}") { Time.now.to_i }
+  end
+
+  def cached_stages
+    Rails.cache.fetch(cache_key, expires_in: 5.minutes) { Stage.get_columns(@base_scope) }
+  end
+
 end

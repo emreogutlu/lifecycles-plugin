@@ -12,7 +12,7 @@ module Lifecycles
             return
           end
 
-          Stage.start_new_lifecycle(self)
+          Stage.create(Stage.start_new_lifecycle(self))
         end
       end
     end
