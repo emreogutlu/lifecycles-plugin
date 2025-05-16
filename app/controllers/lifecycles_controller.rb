@@ -44,7 +44,7 @@ class LifecyclesController < ApplicationController
   def filter_by
     base_setup
     @stages = cached_stages
-    
+
     grouped_counts = Stage.group_and_count_stages(@base_scope)
     @stages_by_user = grouped_counts[:by_user]
     @stages_by_category = grouped_counts[:by_category]

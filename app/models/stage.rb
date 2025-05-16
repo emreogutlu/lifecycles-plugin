@@ -1,6 +1,5 @@
 class Stage < ActiveRecord::Base
     belongs_to :issue
-    belongs_to :category, class_name: 'IssueCategory', foreign_key: 'category_id'
     belongs_to :status, class_name: 'IssueStatus', foreign_key: 'status_id'
     belongs_to :user
 
@@ -12,7 +11,6 @@ class Stage < ActiveRecord::Base
         journal_id: nil,
         user_id: issue_dto.author_id, 
         status_id: 1, #status name: New
-        category_id: issue_dto.category_id,
         start: issue_dto.created_on,
         end: nil,
         time_spent: nil
@@ -21,7 +19,7 @@ class Stage < ActiveRecord::Base
 
     def self.start_new_stage(journal_detail)
       prop_key = journal_detail.prop_key
-      if prop_key != 'category_id' && prop_key != 'status_id'
+      if prop_key != 'status_id'
         return
       end
   
@@ -29,11 +27,7 @@ class Stage < ActiveRecord::Base
       issue = journal.issue
       current_stage = where(issue_id: issue.id, end: nil).first
 
-      if prop_key == 'category_id'
-        current_stage[:category_id] = journal_detail.value
-      elsif prop_key == 'status_id'
-        Stage.create(end_old_start_new_stage(issue, journal, current_stage, journal_detail))
-      end
+      Stage.create(end_old_start_new_stage(issue, journal, current_stage, journal_detail))
       current_stage.save
     end
   
@@ -54,7 +48,6 @@ class Stage < ActiveRecord::Base
         journal_id: journal_dto.id,
         user_id: journal_dto.user_id,
         status_id: journal_dto.respond_to?(:status_id) ? journal_dto.status_id : journal_detail&.value,
-        category_id: issue_dto.category_id,
         start: now,
         end: nil,
         time_spent: nil
@@ -65,7 +58,7 @@ class Stage < ActiveRecord::Base
     def self.filter_stages(project_id, filters)
       base_scope = Stage
         .joins(:issue, :status)
-        .left_joins(:user, :category)
+        .left_joins([{ issue: :category }, :user])
         .where(issues: { project_id: project_id })
         .where(filters)
     end
@@ -95,7 +88,10 @@ class Stage < ActiveRecord::Base
                     .count
                     .transform_keys { |k| "#{k[0]} #{k[1]}" },
 
-        by_category: base_scope.group("issue_categories.name").count
+        by_category: base_scope
+          .group("issue_categories.name")
+          .distinct
+          .count("issues.id")
       }
     end
 
